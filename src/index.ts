@@ -34,12 +34,19 @@ app.get("/api/notes", async (req, res) => {
 
 // Endpoint to create a new note
 app.post("/api/notes", async (req, res) => {
-  const { title, content } = req.body;
+  const { title, content, secondPassword } = req.body;
   // Check if title and content are provided
-  if (!title || !content) {
+  if (!title || !content || !secondPassword) {
     // If not, send a bad request response
     return res.status(400).send("title and content fields required");
   }
+
+  // Check if the second password matches
+  if (secondPassword !== "NotesAppSecondPassword") {
+    // If not, send an unauthorized response
+    return res.status(401).send("Second password is incorrect"); 
+  } 
+
   try {
     // Create a new note in the database
     const note = await prisma.note.create({
